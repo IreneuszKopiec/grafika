@@ -20,3 +20,71 @@ mac(end-1:-1:1,:)                              //zad8
 
 zad9 = mac; zad9(mac >2 & mac <5) +=10
 
+mac2=[1,2,3;4,5,4;7,8,5]
+col=mean(mac2)
+zad10 =mac2-col
+
+mac3 = [1 2 3; 4 5 4];
+sz = size(mac3)
+zad11= 2 * rand(sz(1), sz(2)) - 1;
+
+
+
+//zad12
+mac4 = randi([0, 5], 4, 3);
+for i = 1:size(mac4, 1)
+    for j = 2:size(mac4, 2)
+        mac4(i, j) = mac4(i, j) + mac4(i, j-1);
+    end
+end
+
+//zad13
+mac5 = randi([0, 5], 3, 4);
+mac5
+for i = 1:size(mac5, 1)
+    for j = 2:size(mac5, 1)
+        if mac5(i,j) > 3
+          mac5(i,j) = 0;
+        end
+    end
+end
+mac5
+
+
+//zad14
+clf
+x = [-pi:0.1:pi];
+y1 = abs(sin(x));
+y2 = atan(x);
+plot(x,y1);
+xlabel('wymiar x'); ylabel('wym y'); title('wykres');
+hold on
+plot(x,y2);
+legend('abs(sin(x)','atan(x)');
+
+
+//Obrazek zad1
+img = imread('rzeczka.jpg');
+img(:, 10:50, 1) = 255;
+img(:, 10:50, 2) = 255;
+img(:, 10:50, 3) = 0;
+imshow(img);
+
+//Obrazek zad2
+clf
+img = imread('rzeczka.jpg');
+[height, width, channels] = size(img);
+mirrored_img = img(:, end:-1:1, :);
+combined_img = [img mirrored_img];
+imshow(combined_img);
+
+
+//Obrazek zad3
+clf
+img = imread('rzeczka.jpg');
+img=255-img;
+imshow(img);
+
+
+
+
