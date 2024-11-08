@@ -1,0 +1,122 @@
+Lab2.txt
+
+#zad1
+
+img = imread('plaza1.png');
+img = double(img);
+
+swap = img;
+swap(:,:,1) = img(:,:,3);
+swap(:,:,3) = img(:,:,1);
+
+imshow(swap/255);
+
+
+
+# zad2
+subplot(2,2,1);
+hist(reshape(img, [], 1), 100);
+
+subplot(2,2,2);
+hist(reshape(img(:,:,1), [], 1), 100);
+
+subplot(2,2,3);
+hist(reshape(img(:,:,2), [], 1), 100);
+
+subplot(2,2,4);
+hist(reshape(img(:,:,3), [], 1), 100);
+
+#zad3
+we_min = double(min(img(:)));
+we_max = double(max(img(:)));
+img_scaled = uint8(255 * (double(img) - we_min) / (we_max - we_min));
+subplot(3,2,1);
+imshow(img/255);
+subplot(3,2,2);
+imshow(img_scaled);
+
+subplot(3,2,3);
+hist(reshape(img_scaled, [], 1), 100);
+
+subplot(3,2,4);
+hist(reshape(img_scaled(:,:,1), [], 1), 100);
+
+subplot(3,2,5);
+hist(reshape(img_scaled(:,:,2), [], 1), 100);
+
+subplot(3,2,6);
+hist(reshape(img_scaled(:,:,3), [], 1), 100);
+
+
+
+#zad4
+clf; clc; clear;
+img = imread('plaza1.png');
+img = double(img);
+img_scaled = img;
+
+red = img(:,:,1);
+red_min = min(red(:));
+red_max = max(red(:));
+red_scaled = (red-red_min) * 255 / (red_max-red_min);
+
+green = img(:,:,2);
+green_min = min(green(:));
+green_max = max(green(:));
+green_scaled = (green-green_min) * 255 / (green_max-green_min);
+
+blue = img(:,:,3);
+blue_min = min(blue(:));
+blue_max = max(blue(:));
+blue_scaled = (blue-blue_min) * 255 / (blue_max-blue_min);
+
+img_scaled = cat(3, red_scaled, green_scaled, blue_scaled);
+
+subplot(3,2,1);
+imshow(img/255);
+subplot(3,2,2);
+imshow(img_scaled/255);
+
+subplot(3,2,3);
+hist(reshape(img_scaled, [], 1), 100);
+
+subplot(3,2,4);
+hist(reshape(img_scaled(:,:,1), [], 1), 100);
+
+subplot(3,2,5);
+hist(reshape(img_scaled(:,:,2), [], 1), 100);
+
+subplot(3,2,6);
+hist(reshape(img_scaled(:,:,3), [], 1), 100);
+
+#zad 5
+sorted_values = sort(double(img(:)));
+n = numel(sorted_values);
+we_min_prime = sorted_values(round(0.1 * n));
+we_max_prime = sorted_values(round(0.9 * n));
+
+img_clipped = double(img);
+img_clipped = 255 * (img_clipped - we_min_prime) / (we_max_prime - we_min_prime);
+img_clipped(img_clipped < 0) = 0;
+img_clipped(img_clipped > 255) = 255;
+img_clipped = double(img_clipped);
+
+
+subplot(3,2,1);
+imshow(img/255);
+subplot(3,2,2);
+imshow(img_clipped/255);
+
+subplot(3,2,3);
+hist(reshape(img_clipped, [], 1), 100);
+
+subplot(3,2,4);
+hist(reshape(img_clipped(:,:,1), [], 1), 100);
+
+subplot(3,2,5);
+hist(reshape(img_clipped(:,:,2), [], 1), 100);
+
+subplot(3,2,6);
+hist(reshape(img_clipped(:,:,3), [], 1), 100);
+
+
