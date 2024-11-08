@@ -1,0 +1,41 @@
+#zad1
+clf; clear; clc;
+img =imread('rzeczka.jpg');
+g=1.5;
+img=double(img)/255;
+wyj=img.^(1/g);
+subplot(2,2,1);
+imshow(img);
+title('org');
+subplot(2,2,2);
+imshow(wyj);
+title('gamma 1.5');
+
+p1 = img;
+p2 = img;
+for i=1:size(img,1)
+  for j=1:size(img,2)
+    p1(i,j) = 4 * (wyj(i,j)-img(i,j));
+    p2(i,j) = 3 * (wyj(i,j)-img(i,j))+127.5;
+    if(p1(i,j) > 255)
+      p1(i,j)=255;
+    endif
+    if(p1(i,j) < 0)
+      p1(i,j)=0;
+    endif
+    if(p2(i,j) > 255)
+      p2(i,j)=255;
+    endif
+    if(p2(i,j) < 0)
+      p2(i,j)=0;
+    endif
+  endfor
+endfor
+  
+subplot(2,2,3);
+imshow(p1);
+title('VPS');
+
+subplot(2,2,4);
+imshow(p2);
+title('v2');
