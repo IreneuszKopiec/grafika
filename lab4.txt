@@ -1,41 +1,404 @@
 #zad1
 clf; clear; clc;
-img =imread('rzeczka.jpg');
-g=1.5;
-img=double(img)/255;
-wyj=img.^(1/g);
-subplot(2,2,1);
+img = imread('rzeczka.jpg');
+g = 1.5;
+
+img = double(img) / 255;
+wyj = img .^ (1 / g);
+
+subplot(2, 2, 1);
 imshow(img);
-title('org');
-subplot(2,2,2);
+title('Oryginał');
+
+subplot(2, 2, 2);
 imshow(wyj);
-title('gamma 1.5');
+title('Gamma 1.5');
 
 p1 = img;
 p2 = img;
-for i=1:size(img,1)
-  for j=1:size(img,2)
-    p1(i,j) = 4 * (wyj(i,j)-img(i,j));
-    p2(i,j) = 3 * (wyj(i,j)-img(i,j))+127.5;
-    if(p1(i,j) > 255)
-      p1(i,j)=255;
-    endif
-    if(p1(i,j) < 0)
-      p1(i,j)=0;
-    endif
-    if(p2(i,j) > 255)
-      p2(i,j)=255;
-    endif
-    if(p2(i,j) < 0)
-      p2(i,j)=0;
-    endif
-  endfor
-endfor
-  
-subplot(2,2,3);
+
+
+for i = 1:size(img, 1)
+    for j = 1:size(img, 2)
+        for k = 1:size(img, 3)
+
+            p1(i, j, k) = 4 * abs(wyj(i, j, k) - img(i, j, k));
+            if p1(i, j, k) > 1
+                p1(i, j, k) = 1;
+            elseif p1(i, j, k) < 0
+                p1(i, j, k) = 0;
+            end
+
+
+            p2(i, j, k) = 3 * (wyj(i, j, k) - img(i, j, k)) + 0.5;
+            if p2(i, j, k) > 1
+                p2(i, j, k) = 1;
+            elseif p2(i, j, k) < 0
+                p2(i, j, k) = 0;
+            end
+        end
+    end
+end
+
+
+subplot(2, 2, 3);
 imshow(p1);
 title('VPS');
 
-subplot(2,2,4);
+subplot(2, 2, 4);
 imshow(p2);
 title('v2');
+
+
+
+#zad2
+clf; clear; clc;
+
+img = imread('rzeczka.jpg');
+img = double(img) / 255;
+
+gray_mean = zeros(size(img, 1), size(img, 2));
+gray_weighted = zeros(size(img, 1), size(img, 2));
+
+for i = 1:size(img, 1)
+    for j = 1:size(img, 2)
+        r = img(i, j, 1);
+        g = img(i, j, 2);
+        b = img(i, j, 3);
+
+        gray_mean(i, j) = (r + g + b) / 3;
+        gray_weighted(i, j) = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    end
+end
+
+p1 = zeros(size(img, 1), size(img, 2));
+p2 = zeros(size(img, 1), size(img, 2));
+
+
+for i = 1:size(img, 1)
+    for j = 1:size(img, 2)
+
+        val_mean = gray_mean(i, j);
+        val_weighted = gray_weighted(i, j);
+
+
+        p1(i, j) = 4 * abs(val_weighted - val_mean);
+        if p1(i, j) > 1
+            p1(i, j) = 1;
+        elseif p1(i, j) < 0
+            p1(i, j) = 0;
+        end
+
+        p2(i, j) = 3 * (val_weighted - val_mean) + 0.5;
+        if p2(i, j) > 1
+            p2(i, j) = 1;
+        elseif p2(i, j) < 0
+            p2(i, j) = 0;
+        end
+    end
+end
+
+subplot(2, 2, 1);
+imshow(gray_weighted, [0, 1]);
+title('SzaroscSzary');
+
+subplot(2, 2, 2);
+imshow(gray_mean, [0, 1]);
+title('SzarośćŚrednia');
+
+subplot(2, 2, 3);
+imshow(p1, [0, 1]);
+title('Porównanie p1');
+
+subplot(2, 2, 4);
+imshow(p2, [0, 1]);
+title('Porównanie p2');
+
+
+#zad3
+clf; clear; clc;
+
+img = imread('rzeczka.jpg');
+
+R = double(img(:, :, 1));
+G = double(img(:, :, 2));
+B = double(img(:, :, 3));
+
+Y = 0.299 * R + 0.587 * G + 0.114 * B;
+Cb = 128 - 0.168736 * R - 0.331264 * G + 0.5 * B;
+Cr = 128 + 0.5 * R - 0.418688 * G - 0.081312 * B;
+
+subplot(1, 3, 1);
+imshow(Y / 255);
+title('Składowa Y'' (jasność)');
+
+subplot(1, 3, 2);
+imshow(Cb / 255);
+title('Składowa Cb (kolor niebieski)');
+
+subplot(1, 3, 3);
+imshow(Cr / 255);
+title('Składowa Cr (kolor czerwony)');
+
+
+#zad4
+clf; clear; clc;
+
+img = imread('rzeczka.jpg');
+img = double(img) / 255;
+
+R = img(:, :, 1);
+G = img(:, :, 2);
+B = img(:, :, 3);
+
+Y = 0.299 * R + 0.587 * G + 0.114 * B;
+Cb = 128 - 0.168736 * R - 0.331264 * G + 0.5 * B;
+Cr = 128 + 0.5 * R - 0.418688 * G - 0.081312 * B;
+
+R_reconstructed = Y + 1.402 * (Cr - 128);
+G_reconstructed = Y - 0.344136 * (Cb - 128) - 0.714136 * (Cr - 128);
+B_reconstructed = Y + 1.772 * (Cb - 128);
+
+reconstructed_img = cat(3, R_reconstructed, G_reconstructed, B_reconstructed);
+
+
+p1 = zeros(size(img));
+p2 = zeros(size(img));
+
+
+for i = 1:size(img, 1)
+    for j = 1:size(img, 2)
+        for k = 1:size(img, 3)
+            p1(i, j, k) = 1000000 * abs(reconstructed_img(i, j, k) - img(i, j, k));
+            if p1(i, j, k) > 1
+                p1(i, j, k) = 1;
+            elseif p1(i, j, k) < 0
+                p1(i, j, k) = 0;
+            end
+
+            p2(i, j, k) = 1000000 * (reconstructed_img(i, j, k) - img(i, j, k)) + 0.5;
+            if p2(i, j, k) > 1
+                p2(i, j, k) = 1;
+            elseif p2(i, j, k) < 0
+                p2(i, j, k) = 0;
+            end
+        end
+    end
+end
+
+max_diff = max(max(max(abs(reconstructed_img - img))));
+
+subplot(2, 2, 1);
+imshow(img);
+title('Oryginał');
+
+subplot(2, 2, 2);
+imshow(reconstructed_img);
+title('Przetworzony na Y’CbCr i z powrotem do RGB');
+
+subplot(2, 2, 3);
+imshow(p1);
+title('Porównanie p1');
+
+subplot(2, 2, 4);
+imshow(p2);
+title('Porównanie p2');
+
+
+
+
+
+#zad5
+clf; clear; clc;
+
+img = imread('rzeczka.jpg');
+img = double(img);
+
+R = img(:, :, 1);
+G = img(:, :, 2);
+B = img(:, :, 3);
+
+Y = round(0.299 * R + 0.587 * G + 0.114 * B);
+Cb = round(128 - 0.168736 * R - 0.331264 * G + 0.5 * B);
+Cr = round(128 + 0.5 * R - 0.418688 * G - 0.081312 * B);
+
+R_reconstructed = round(Y + 1.402 * (Cr - 128));
+G_reconstructed = round(Y - 0.344136 * (Cb - 128) - 0.714136 * (Cr - 128));
+B_reconstructed = round(Y + 1.772 * (Cb - 128));
+
+reconstructed_img = cat(3, R_reconstructed, G_reconstructed, B_reconstructed);
+
+p1 = zeros(size(img));
+p2 = zeros(size(img));
+
+for i = 1:size(img, 1)
+    for j = 1:size(img, 2)
+        for k = 1:size(img, 3)
+            p1(i, j, k) = 250 * abs(reconstructed_img(i, j, k) - img(i, j, k));
+            if p1(i, j, k) > 1
+                p1(i, j, k) = 1;
+            elseif p1(i, j, k) < 0
+                p1(i, j, k) = 0;
+            end
+
+            p2(i, j, k) = 300 * (reconstructed_img(i, j, k) - img(i, j, k)) + 0.5;
+            if p2(i, j, k) > 1
+                p2(i, j, k) = 1;
+            elseif p2(i, j, k) < 0
+                p2(i, j, k) = 0;
+            end
+        end
+    end
+end
+
+subplot(2, 2, 1);
+imshow(uint8(img));
+title('Oryginał');
+
+subplot(2, 2, 2);
+imshow(uint8(reconstructed_img));
+title('Przetworzony na Y’CbCr i z powrotem');
+
+subplot(2, 2, 3);
+imshow(p1);
+title('Porównanie p1');
+
+subplot(2, 2, 4);
+imshow(p2);
+title('Porównanie p2');
+
+
+
+#zad6
+clf; clear; clc;
+
+img = imread('rzeczka.jpg');
+img = double(img) / 255;
+
+
+gamma = 1.5;
+gamma_rgb = img .^ (1 / gamma);
+
+R = img(:, :, 1);
+G = img(:, :, 2);
+B = img(:, :, 3);
+
+Y = 0.299 * R + 0.587 * G + 0.114 * B;
+Cb = (128 - 0.168736 * R * 255 - 0.331264 * G * 255 + 0.5 * B * 255) / 255;
+Cr = (128 + 0.5 * R * 255 - 0.418688 * G * 255 - 0.081312 * B * 255) / 255;
+
+Y_gamma = Y .^ (1 / gamma);
+
+R_ycc = Y_gamma + 1.402 * (Cr - 128 / 255);
+G_ycc = Y_gamma - 0.344136 * (Cb - 128 / 255) - 0.714136 * (Cr - 128 / 255);
+B_ycc = Y_gamma + 1.772 * (Cb - 128 / 255);
+
+rgb_from_ycc = cat(3, R_ycc, G_ycc, B_ycc);
+
+p1 = zeros(size(img));
+p2 = zeros(size(img));
+
+for i = 1:size(img, 1)
+    for j = 1:size(img, 2)
+        for k = 1:size(img, 3)
+             p1(i, j, k) = 50 * abs(rgb_from_ycc(i, j, k) - gamma_rgb(i, j, k));
+            if p1(i, j, k) > 1
+                p1(i, j, k) = 1;
+            elseif p1(i, j, k) < 0
+                p1(i, j, k) = 0;
+            end
+
+            p2(i, j, k) = 50 * (rgb_from_ycc(i, j, k) - gamma_rgb(i, j, k)) + 0.5;
+            if p2(i, j, k) > 1
+                p2(i, j, k) = 1;
+            elseif p2(i, j, k) < 0
+                p2(i, j, k) = 0;
+            end
+        end
+    end
+end
+
+
+subplot(2, 2, 1);
+imshow(gamma_rgb);
+title('Gamma 1.5 na RGB');
+
+subplot(2, 2, 2);
+imshow(rgb_from_ycc);
+title('Gamma 1.5 na Y (Y’CbCr)');
+
+subplot(2, 2, 3);
+imshow(p1, [0, 1]);
+title('Porównanie p1');
+
+subplot(2, 2, 4);
+imshow(p2, [0, 1]);
+title('Porównanie p2');
+
+
+#zad7
+clf; clear; clc;
+
+img = imread('rzeczka.jpg');
+img = double(img) / 255;
+
+R = img(:, :, 1);
+G = img(:, :, 2);
+B = img(:, :, 3);
+
+Y = 0.299 * R + 0.587 * G + 0.114 * B;
+Cb = (128 - 0.168736 * R * 255 - 0.331264 * G * 255 + 0.5 * B * 255) / 255;
+Cr = (128 + 0.5 * R * 255 - 0.418688 * G * 255 - 0.081312 * B * 255) / 255;
+
+PodbicieKolorow = 1.5;
+
+Cb_adjusted = 128 / 255 + (Cb - 128 / 255) * PodbicieKolorow;
+Cr_adjusted = 128 / 255 + (Cr - 128 / 255) * PodbicieKolorow;
+
+Cb_adjusted = max(0, min(1, Cb_adjusted));
+Cr_adjusted = max(0, min(1, Cr_adjusted));
+
+R_new = Y + 1.402 * (Cr_adjusted - 128 / 255);
+G_new = Y - 0.344136 * (Cb_adjusted - 128 / 255) - 0.714136 * (Cr_adjusted - 128 / 255);
+B_new = Y + 1.772 * (Cb_adjusted - 128 / 255);
+
+rgb_output = cat(3, R_new, G_new, B_new);
+
+p1 = zeros(size(img));
+p2 = zeros(size(img));
+
+for i = 1:size(img, 1)
+    for j = 1:size(img, 2)
+        for k = 1:size(img, 3)
+             p1(i, j, k) = 10 * abs(rgb_output(i, j, k) - img(i, j, k));
+            if p1(i, j, k) > 1
+                p1(i, j, k) = 1;
+            elseif p1(i, j, k) < 0
+                p1(i, j, k) = 0;
+            end
+
+            p2(i, j, k) = 10 * (rgb_output(i, j, k) - img(i, j, k)) + 0.5;
+            if p2(i, j, k) > 1
+                p2(i, j, k) = 1;
+            elseif p2(i, j, k) < 0
+                p2(i, j, k) = 0;
+            end
+        end
+    end
+end
+
+subplot(2, 2, 1);
+imshow(img);
+title('Oryginalny obraz');
+
+subplot(2, 2, 2);
+imshow(rgb_output);
+title('Zwiększone nasycenie kolorów');
+
+subplot(2, 2, 3);
+imshow(p1);
+title('p1');
+
+subplot(2, 2, 4);
+imshow(p2);
+title('p4');
